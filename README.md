@@ -58,7 +58,7 @@ Instead of relying on village aggregators, mandi commission agents, and wholesal
 
 ### Technical Architecture & Workflow Diagram
 
-'''mermaid
+```mermaid
 graph TD
     A["Smallholder Farmer: App or Voice IVR"] -->|Lists Harvest Lot| B("Village Micro-Hub: TFLite Optical Grading & QR Smart Crate")
     C["Bulk Buyers & Consumer Groups"] -->|Posts Daily Demand & Locks UPI Escrow| D{"UzhavarDirect Matching & PostGIS Engine"}
@@ -69,7 +69,7 @@ graph TD
     C -->|QR Delivery Scan Confirmation| G["Automated UPI Split-Escrow Settlement"]
     G -->|Instant Direct Bank Transfer| A
     G -->|Automated Freight Payout| F
-'''    
+```  
 
 
 ### Methodology and Process for Implementation
