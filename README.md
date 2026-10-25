@@ -59,18 +59,18 @@ Instead of relying on village aggregators, mandi commission agents, and wholesal
 ### Technical Architecture & Workflow Diagram
 
 ```mermaid
-graph LR
-    A[Smallholder Farmer: App / IVR] -->|1. Lists Lot| B(Village Micro-Hub: TFLite & QR Crate)
-    B -->|2a. Graded Crates| D{UzhavarDirect Matching & PostGIS Engine}
-    C[Bulk Buyers & Consumer Groups] -->|2b. Demand & UPI Escrow| D
-    E[Agmarknet Price AI] -->|2c. Floor Price| D
+graph TD
+    A[Smallholder Farmer: App or Voice IVR] -->|1. Lists Harvest Lot| B(Village Micro-Hub: TFLite Grading & QR Smart Crate)
+    B -->|2a. Graded Crate Data| D{UzhavarDirect Matching & PostGIS Engine}
+    C[Bulk Buyers & Consumer Groups] -->|2b. Posts Daily Demand & Locks UPI Escrow| D
+    E[Agmarknet Live Price Benchmark AI] -->|2c. Live Floor-Price Feed| D
     
-    D -->|3. OR-Tools Route| F[Rural Milk-Run Vehicle]
-    F -->|4. Doorstep Delivery| G[Buyer QR Scan Confirmation]
+    D -->|3. Computes Multi-Stop Route via Google OR-Tools| F[Rural Milk-Run Pickup Vehicle]
+    F -->|4. Direct Doorstep Delivery - Zero Middlemen| G[Buyer Delivery & QR Scan Confirmation]
     
-    G -->|5. Releases Escrow| H[UPI Split-Escrow Settlement]
-    H -->|6a. 100% Produce Payout| I([Farmer Bank Account])
-    H -->|6b. Freight Payout| J([Driver Bank Account])
+    G -->|5. Triggers Instant Release| H[Automated UPI Split-Escrow Settlement]
+    H -->|6a. 100% Crop Value Instant Transfer| I([Farmer Bank Account via UPI])
+    H -->|6b. Automated Freight Payout| J([Driver Bank Account via UPI])
 ```
 
 
