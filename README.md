@@ -58,18 +58,28 @@ Instead of relying on village aggregators, mandi commission agents, and wholesal
 
 ### Technical Architecture & Workflow Diagram
 
-```mermaid
-graph TD
-    A["Smallholder Farmer: App or Voice IVR"] -->|Lists Harvest Lot| B("Village Micro-Hub: TFLite Optical Grading & QR Smart Crate")
-    C["Bulk Buyers & Consumer Groups"] -->|Posts Daily Demand & Locks UPI Escrow| D{"UzhavarDirect Matching & PostGIS Engine"}
-    E["Agmarknet Live Price Benchmark AI"] --> D
-    B --> D
-    D -->|Computes Multi-Stop Route via Google OR-Tools| F["Rural Milk-Run Pickup Vehicle"]
-    F -->|Direct Doorstep Delivery - Zero Middlemen| C
-    C -->|QR Delivery Scan Confirmation| G["Automated UPI Split-Escrow Settlement"]
-    G -->|Instant Direct Bank Transfer| A
-    G -->|Automated Freight Payout| F
-```  
+flowchart TD
+    subgraph Inputs [1. Demand & Supply Inputs]
+        A[Smallholder Farmer: App / Voice IVR] -->|1a. Lists Harvest Lot| B(Village Micro-Hub: TFLite Grading & QR Crate)
+        C[Bulk Buyers & Consumer Groups] -->|1b. Posts Daily Demand & Locks Escrow| D[UzhavarDirect Matching & PostGIS Engine]
+        E[Agmarknet Live Price Benchmark AI] -->|1c. Live Floor Price Feed| D
+        B -->|1d. Graded Crate Batches| D
+    end
+
+    subgraph Logistics [2. Route Optimization & Fulfillment]
+        D -->|2. Computes Multi-Stop CVRPTW Route| F[Rural Milk-Run Pickup Vehicle]
+        B -.->|Physical Crate Loading| F
+        F -->|3. Direct Doorstep Delivery - Zero Middlemen| C
+    end
+
+    subgraph Settlement [3. Verification & Payouts]
+        C -->|4. QR Delivery Scan Confirmation| G[Automated UPI Split-Escrow Settlement]
+        G -->|5a. Produce Payout: Instant UPI Transfer| A
+        G -->|5b. Freight Payout: Driver UPI| F
+    end
+
+    classDef core fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    class D,G core;
 
 
 ### Methodology and Process for Implementation
