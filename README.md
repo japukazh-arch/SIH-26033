@@ -59,48 +59,18 @@ Instead of relying on village aggregators, mandi commission agents, and wholesal
 ### Technical Architecture & Workflow Diagram
 
 ```mermaid
-flowchart TD
-    %% --- STAGE 1: DEMAND & SUPPLY ---
-    subgraph Stage1 ["1. Sourcing & Demand Aggregation"]
-        direction TB
-        Farmer["👨‍🌾 Smallholder Farmer<br/>(App / IVR Voice Listing)"]
-        Hub["🏬 Village Micro-Hub<br/>(TFLite Optical Grading & QR Crate)"]
-        Agmarknet["📊 Agmarknet AI<br/>(Live Mandi Price Benchmark)"]
-        Buyers["🛒 Bulk Buyers / Consumers<br/>(Daily Demand & Locked Escrow)"]
-
-        Farmer -->|"1a. Crop Lot Drop / Pickup"| Hub
-        Hub -->|"1b. Graded Crate Batches"| Engine
-        Agmarknet -->|"1c. Live Floor Price"| Engine
-        Buyers -->|"1d. Daily Order Pool"| Engine
-    end
-
-    %% --- STAGE 2: MATCHING & ROUTING ---
-    Engine[["⚙️ UzhavarDirect Matching & PostGIS Engine"]]
-
-    %% --- STAGE 3: LOGISTICS & DELIVERY ---
-    subgraph Stage2 ["2. Milk-Run Logistics & Delivery"]
-        direction TB
-        Engine -->|"2a. Google OR-Tools CVRPTW Route"| Truck["🚚 Rural Milk-Run Vehicle"]
-        Hub -.->|"2b. Stacked QR Crates Loaded"| Truck
-        Truck -->|"3. Direct Doorstep Delivery"| DeliveryPoint["🏢 Buyer Doorstep<br/>(Restaurant / Supermarket / Kitchen)"]
-    end
-
-    %% --- STAGE 4: SETTLEMENT ---
-    subgraph Stage3 ["3. Automated Split-Escrow Settlement"]
-        direction TB
-        DeliveryPoint -->|"4. Buyer Scans QR on Delivery"| Escrow["💳 UPI Split-Escrow Settlement"]
-        Escrow -->|"5a. Produce Value (100%)"| FarmerPay["🏦 Farmer Bank Account (Instant UPI)"]
-        Escrow -->|"5b. Freight Share"| DriverPay["💵 Driver UPI Wallet"]
-    end
-
-    %% --- STYLING ---
-    classDef core fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
-    classDef nodeStyle fill:#f9fbe7,stroke:#33691e,stroke-width:1.5px;
-    classDef payStyle fill:#fff3e0,stroke:#e65100,stroke-width:1.5px;
-
-    class Engine core;
-    class Farmer,Hub,Buyers,Truck,DeliveryPoint,Agmarknet nodeStyle;
-    class Escrow,FarmerPay,DriverPay payStyle;
+graph LR
+    A[Smallholder Farmer: App / IVR] -->|1. Lists Lot| B(Village Micro-Hub: TFLite & QR Crate)
+    B -->|2a. Graded Crates| D{UzhavarDirect Matching & PostGIS Engine}
+    C[Bulk Buyers & Consumer Groups] -->|2b. Demand & UPI Escrow| D
+    E[Agmarknet Price AI] -->|2c. Floor Price| D
+    
+    D -->|3. OR-Tools Route| F[Rural Milk-Run Vehicle]
+    F -->|4. Doorstep Delivery| G[Buyer QR Scan Confirmation]
+    
+    G -->|5. Releases Escrow| H[UPI Split-Escrow Settlement]
+    H -->|6a. 100% Produce Payout| I([Farmer Bank Account])
+    H -->|6b. Freight Payout| J([Driver Bank Account])
 ```
 
 
