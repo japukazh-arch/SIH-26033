@@ -60,27 +60,47 @@ Instead of relying on village aggregators, mandi commission agents, and wholesal
 
 ```mermaid
 flowchart TD
-    subgraph Inputs [1. Demand & Supply Inputs]
-        A[Smallholder Farmer: App / Voice IVR] -->|1a. Lists Harvest Lot| B(Village Micro-Hub: TFLite Grading & QR Crate)
-        C[Bulk Buyers & Consumer Groups] -->|1b. Posts Daily Demand & Locks Escrow| D[UzhavarDirect Matching & PostGIS Engine]
-        E[Agmarknet Live Price Benchmark AI] -->|1c. Live Floor Price Feed| D
-        B -->|1d. Graded Crate Batches| D
+    %% --- STAGE 1: DEMAND & SUPPLY ---
+    subgraph Stage1 ["1. Sourcing & Demand Aggregation"]
+        direction TB
+        Farmer["👨‍🌾 Smallholder Farmer<br/>(App / IVR Voice Listing)"]
+        Hub["🏬 Village Micro-Hub<br/>(TFLite Optical Grading & QR Crate)"]
+        Agmarknet["📊 Agmarknet AI<br/>(Live Mandi Price Benchmark)"]
+        Buyers["🛒 Bulk Buyers / Consumers<br/>(Daily Demand & Locked Escrow)"]
+
+        Farmer -->|"1a. Crop Lot Drop / Pickup"| Hub
+        Hub -->|"1b. Graded Crate Batches"| Engine
+        Agmarknet -->|"1c. Live Floor Price"| Engine
+        Buyers -->|"1d. Daily Order Pool"| Engine
     end
 
-    subgraph Logistics [2. Route Optimization & Fulfillment]
-        D -->|2. Computes Multi-Stop CVRPTW Route| F[Rural Milk-Run Pickup Vehicle]
-        B -.->|Physical Crate Loading| F
-        F -->|3. Direct Doorstep Delivery - Zero Middlemen| C
+    %% --- STAGE 2: MATCHING & ROUTING ---
+    Engine[["⚙️ UzhavarDirect Matching & PostGIS Engine"]]
+
+    %% --- STAGE 3: LOGISTICS & DELIVERY ---
+    subgraph Stage2 ["2. Milk-Run Logistics & Delivery"]
+        direction TB
+        Engine -->|"2a. Google OR-Tools CVRPTW Route"| Truck["🚚 Rural Milk-Run Vehicle"]
+        Hub -.->|"2b. Stacked QR Crates Loaded"| Truck
+        Truck -->|"3. Direct Doorstep Delivery"| DeliveryPoint["🏢 Buyer Doorstep<br/>(Restaurant / Supermarket / Kitchen)"]
     end
 
-    subgraph Settlement [3. Verification & Payouts]
-        C -->|4. QR Delivery Scan Confirmation| G[Automated UPI Split-Escrow Settlement]
-        G -->|5a. Produce Payout: Instant UPI Transfer| A
-        G -->|5b. Freight Payout: Driver UPI| F
+    %% --- STAGE 4: SETTLEMENT ---
+    subgraph Stage3 ["3. Automated Split-Escrow Settlement"]
+        direction TB
+        DeliveryPoint -->|"4. Buyer Scans QR on Delivery"| Escrow["💳 UPI Split-Escrow Settlement"]
+        Escrow -->|"5a. Produce Value (100%)"| FarmerPay["🏦 Farmer Bank Account (Instant UPI)"]
+        Escrow -->|"5b. Freight Share"| DriverPay["💵 Driver UPI Wallet"]
     end
 
-    classDef core fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
-    class D,G core;
+    %% --- STYLING ---
+    classDef core fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    classDef nodeStyle fill:#f9fbe7,stroke:#33691e,stroke-width:1.5px;
+    classDef payStyle fill:#fff3e0,stroke:#e65100,stroke-width:1.5px;
+
+    class Engine core;
+    class Farmer,Hub,Buyers,Truck,DeliveryPoint,Agmarknet nodeStyle;
+    class Escrow,FarmerPay,DriverPay payStyle;
 ```
 
 
