@@ -58,6 +58,7 @@ Instead of relying on village aggregators, mandi commission agents, and wholesal
 
 ### Technical Architecture & Workflow Diagram
 
+```mermaid
 flowchart TD
     subgraph Inputs [1. Demand & Supply Inputs]
         A[Smallholder Farmer: App / Voice IVR] -->|1a. Lists Harvest Lot| B(Village Micro-Hub: TFLite Grading & QR Crate)
@@ -80,6 +81,7 @@ flowchart TD
 
     classDef core fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
     class D,G core;
+```
 
 
 ### Methodology and Process for Implementation
